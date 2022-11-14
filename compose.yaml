@@ -1,0 +1,63 @@
+name: perjuryman
+
+services:  
+  server:
+    build:
+      context: ./.docker/go
+      dockerfile: Dockerfile
+    container_name: server.local
+    networks:
+      perjuryman:
+        ipv4_address: 10.0.3.95
+    privileged: true
+    restart: always
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: "1" # disable
+    tty: true
+    volumes:
+      - type: bind
+        source: ./client
+        target: /go/src/github.com/GotoRen/perjuryman/client
+        bind:
+          create_host_path: true
+      - type: bind
+        source: ./server
+        target: /go/src/github.com/GotoRen/perjuryman/server
+        bind:
+          create_host_path: true    
+    working_dir: /go/src/github.com/GotoRen/perjuryman/server
+ 
+  client:
+    build:
+      context: ./.docker/go
+      dockerfile: Dockerfile
+    container_name: client.local
+    networks:
+      perjuryman:
+        ipv4_address: 10.0.3.96
+    privileged: true
+    restart: always
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: "1" # disable
+    tty: true
+    volumes:
+      - type: bind
+        source: ./client
+        target: /go/src/github.com/GotoRen/perjuryman/client
+        bind:
+          create_host_path: true
+      - type: bind
+        source: ./server
+        target: /go/src/github.com/GotoRen/perjuryman/server
+        bind:
+          create_host_path: true    
+    working_dir: /go/src/github.com/GotoRen/perjuryman/client
+
+networks:
+  perjuryman:
+    name: perjuryman_link
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.3.0/22
+    enable_ipv6: false
