@@ -39,10 +39,6 @@ coverage: ## coverage
 	go test -coverprofile=cover.out ./...
 	go tool cover -html=cover.out -o cover.html
 
-create/certificate/client: ## create certificate signing request for tls communication
-	$(GORUN) ./cmd/certificate/main.go node_client
-	rm client_certreq.pem
-
 
 
 help: ## Display this help screen

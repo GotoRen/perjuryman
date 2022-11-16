@@ -62,3 +62,4 @@ PKIは『暗号化』と『デジタル署名』の機能を用いて以下の�
 ## References
 - https://www.iestudy.work/entry/2019/11/24/223245
 - https://blog.freedom-man.com/openssl-command
+- https://www.infraexpert.com/study/security7.html

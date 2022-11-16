@@ -1,6 +1,8 @@
 package exec
 
 import (
+	"fmt"
+
 	"github.com/GotoRen/perjuryman/client/internal"
 	"github.com/GotoRen/perjuryman/client/internal/logger"
 	"github.com/joho/godotenv"
@@ -9,9 +11,17 @@ import (
 func Run() {
 	LoadConf()
 
-	if _, err := internal.HandleTLS(); err != nil {
-		logger.LogErr("Failed to establish TLS connection", "error", err)
+	conn, err := internal.HandleTLS()
+	if err != nil {
+		logger.LogErr("Failed to establish TLS connection...", "error", err)
+	} else {
+		fmt.Println("TLSを確立しました:", conn.LocalAddr().String())
+		fmt.Println("TLSを確立しました:", conn.RemoteAddr().String())
 	}
+
+	for {
+	}
+
 	// _ := HandleServerConn(conn)
 }
 

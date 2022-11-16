@@ -60,9 +60,11 @@ func GenerateServerCert() (tlsConf *tls.Config, err error) {
 // SetUpServerCA is setting up ServerCA.
 func SetUpServerCA(commonName string) (ca *x509.Certificate) {
 	var serialNum int64 = 2023
-	var expandYears int = 11
+	var expandYears int = 10
 
-	// set up our ServerCA certificate
+	fmt.Println("[DEBUG] commonName:", commonName)
+
+	// set up server certificate
 	ca = &x509.Certificate{
 		SerialNumber: big.NewInt(serialNum),
 		Subject: pkix.Name{
@@ -79,11 +81,12 @@ func SetUpServerCA(commonName string) (ca *x509.Certificate) {
 		IsCA:                  true,
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(expandYears, 0, 0), // 10 years
-		EmailAddresses:        []string{os.Getenv("SERVER_EMAIL")},
+		EmailAddresses:        []string{"ren510dev@gmail.com"},
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		DNSNames:              []string{commonName},
 	}
+
 	return ca
 }
 
@@ -172,33 +175,3 @@ func CreateCertPrivate(certPrivKey *rsa.PrivateKey, certPEM *bytes.Buffer) (tlsC
 
 	return tlsConf, nil
 }
-
-// // ==================================================================//
-// // Create client certificate
-// // ==================================================================//
-
-// // CreateClientCert creates client certificates.
-// func CreateClientCert(certBytes []byte, cName string) (err error) {
-// 	f, err := os.Create(cName + "_cert.pem")
-// 	if err != nil {
-// 		logger.LogErr("client: Failed to create cName_cert.pem", "error", err)
-// 		return err
-// 	}
-
-// 	err = pem.Encode(f, &pem.Block{
-// 		Type:  "CERTIFICATE",
-// 		Bytes: certBytes,
-// 	})
-// 	if err != nil {
-// 		logger.LogErr("client: cName_cert.pem encoding failure", "error", err)
-// 		return err
-// 	}
-
-// 	err = f.Close()
-// 	if err != nil {
-// 		logger.LogErr("client: Failed to close cName_cert.pem", "error", err)
-// 		return err
-// 	}
-
-// 	return nil
-// }

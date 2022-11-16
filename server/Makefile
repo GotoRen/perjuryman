@@ -39,10 +39,13 @@ coverage: ## coverage
 	go test -coverprofile=cover.out ./...
 	go tool cover -html=cover.out -o cover.html
 
+listen: ## check listen port
+	lsof -i -P
+
 create/certificate/server: ## create ca and server certificate
 	$(GORUN) ./cmd/certificate/main.go
 	@cp ca.pem ../client; echo "[INFO] Sent the root certificate to the client"
-
+	
 
 
 help: ## Display this help screen

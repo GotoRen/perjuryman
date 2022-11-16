@@ -32,5 +32,10 @@ func initCert() (serverTLSConf *tls.Config, err error) {
 		return nil, err
 	}
 
+	// _, err = internal.GenerateClientCert("client", "client@perjuryman.org")
+	// if err != nil {
+	// 	logger.LogErr("Failed to get the client certificate information", "error", err)
+	// }
+
 	return serverTLSConf, nil
 }

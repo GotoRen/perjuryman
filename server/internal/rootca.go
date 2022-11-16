@@ -48,7 +48,7 @@ func GenerateRootCA() (ca *x509.Certificate, caPrivKey *rsa.PrivateKey, err erro
 // SetUpRootCA is setting up RootCA.
 func SetUpRootCA(commonName string) (ca *x509.Certificate) {
 	var serialNum int64 = 2023
-	var expandYears int = 11
+	var expandYears int = 10
 
 	// set up our RootCA certificate
 	ca = &x509.Certificate{
@@ -66,7 +66,7 @@ func SetUpRootCA(commonName string) (ca *x509.Certificate) {
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(expandYears, 0, 0), // 10 years
 		IsCA:                  true,
-		EmailAddresses:        []string{os.Getenv("ROOTCA_EMAIL")},
+		EmailAddresses:        []string{"ren510dev@gmail.com"},
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		BasicConstraintsValid: true,

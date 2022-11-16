@@ -1,8 +1,13 @@
 package exec
 
 import (
+	"bufio"
 	"crypto/tls"
+	"errors"
 	"fmt"
+	"io"
+	"log"
+	"net"
 	"os"
 
 	"github.com/GotoRen/perjuryman/server/internal"
@@ -13,18 +18,18 @@ import (
 func Run() {
 	LoadConf()
 
-	fmt.Println("Hello, World!")
-
-	serverTLSConf, err := internal.GetCert()
+	serverTLSConf, err := internal.GetCert() // サーバ証明書を取得
 	if err != nil {
 		logger.LogErr("Failed to issue perjuryman server certificate", "error", err)
 	}
-	fmt.Println("OK")
 
-	ln, err := tls.Listen("tcp", ":"+os.Getenv("TLS_PORT"), serverTLSConf)
+	// TLS通信ダイアル
+	ln, err := tls.Listen("tcp", "server.local:"+os.Getenv("TLS_PORT"), serverTLSConf)
 	if err != nil {
 		logger.LogErr("Connection refused", "error", err)
 		return
+	} else {
+		fmt.Println("[INFO] TLS listen...")
 	}
 
 	defer func() {
@@ -34,15 +39,41 @@ func Run() {
 	}()
 
 	for {
-		_, err := ln.Accept()
+		// _, err := ln.Accept()
+		// if err != nil {
+		// 	logger.LogErr("Can't get the socket", "error", err)
+		// 	continue
+		// } else {
+		// 	fmt.Println("[INFO] Established TLS connection...")
+		// }
+
+		// go HandleConnection(conn)
+		conn, err := ln.Accept()
 		if err != nil {
-			logger.LogErr("Can't get the socket", "error", err)
-			continue
+			log.Fatal(err)
 		} else {
-			fmt.Println("[INFO] Established TLS connection...")
+			fmt.Println("TLS接続成功")
 		}
 
-		// go internal.HandleConnection(conn, db)
+		_, err = conn.Write([]byte("hello\n"))
+		if err != nil {
+			fmt.Println("[-] ERROR:", err)
+			return
+		} else {
+			fmt.Println("Send messages")
+		}
+
+		// defer conn.Close()
+
+		// for {
+		// 	message, err := bufio.NewReader(conn).ReadString('\n')
+		// 	if err != nil {
+		// 		fmt.Println("no read", err)
+		// 	}
+		// 	log.Print("Message Received:", string(message))
+		// 	newmessage := strings.ToUpper(message)
+		// 	conn.Write([]byte(newmessage + "\n"))
+		// }
 	}
 }
 
@@ -53,4 +84,27 @@ func LoadConf() {
 	}
 
 	logger.InitZap()
+}
+
+// HandleConnection handle TCP connection.
+func HandleConnection(conn net.Conn) {
+	defer func() {
+		if err := conn.Close(); err != nil {
+			logger.LogErr("Error when connection closing", "error", err)
+		}
+	}()
+
+	for {
+		b := make([]byte, 3500)
+		bi := bufio.NewReadWriter(bufio.NewReader(conn), bufio.NewWriter(conn))
+		_, err := bi.Read(b)
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				return
+			}
+
+			return
+		}
+		fmt.Println("OK:", b)
+	}
 }
