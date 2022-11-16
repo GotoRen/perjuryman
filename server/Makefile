@@ -39,15 +39,9 @@ coverage: ## coverage
 	go test -coverprofile=cover.out ./...
 	go tool cover -html=cover.out -o cover.html
 
-create/certificate/server: ## create ca and server certificate files
+create/certificate/server: ## create ca and server certificate
 	$(GORUN) ./cmd/certificate/main.go
-	cp ca.pem ../client
-	cp server.pem ../client
-
-# create/certificate/client: ## create client certificate files
-# 	$(GORUN) ./cmd/certificate/main.go
-# 	mv client_cert.pem ../client
-# 	rm client_certreq.pem
+	@cp ca.pem ../client; echo "[INFO] Sent the root certificate to the client"
 
 
 

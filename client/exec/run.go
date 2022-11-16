@@ -1,8 +1,7 @@
 package exec
 
 import (
-	"fmt"
-
+	"github.com/GotoRen/perjuryman/client/internal"
 	"github.com/GotoRen/perjuryman/client/internal/logger"
 	"github.com/joho/godotenv"
 )
@@ -10,7 +9,10 @@ import (
 func Run() {
 	LoadConf()
 
-	fmt.Println("Hello, World!")
+	if _, err := internal.HandleTLS(); err != nil {
+		logger.LogErr("Failed to establish TLS connection", "error", err)
+	}
+	// _ := HandleServerConn(conn)
 }
 
 func LoadConf() {

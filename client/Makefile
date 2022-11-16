@@ -41,7 +41,7 @@ coverage: ## coverage
 
 create/certificate/client: ## create certificate signing request for tls communication
 	$(GORUN) ./cmd/certificate/main.go node_client
-	cp client_certreq.pem ../server
+	rm client_certreq.pem
 
 
 

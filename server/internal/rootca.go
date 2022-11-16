@@ -47,8 +47,8 @@ func GenerateRootCA() (ca *x509.Certificate, caPrivKey *rsa.PrivateKey, err erro
 
 // SetUpRootCA is setting up RootCA.
 func SetUpRootCA(commonName string) (ca *x509.Certificate) {
-	var serialNum int64 = 2021
-	var expandYears int = 10
+	var serialNum int64 = 2023
+	var expandYears int = 11
 
 	// set up our RootCA certificate
 	ca = &x509.Certificate{
@@ -95,7 +95,7 @@ func CreateCA(ca *x509.Certificate, caPrivKey *rsa.PrivateKey) (err error) {
 		return err
 	}
 
-	// ルート証明書を作成
+	// create root certificate
 	f, err := os.Create("ca.pem")
 	if err != nil {
 		logger.LogErr("RootCA: Failed to create ca.pem", "error", err)
@@ -137,7 +137,10 @@ func CreateCAPrivateKeyPEM(ca *x509.Certificate, caPrivKey *rsa.PrivateKey) (err
 		return err
 	}
 
-	err = pem.Encode(f, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(caPrivKey)})
+	err = pem.Encode(f, &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(caPrivKey),
+	})
 	if err != nil {
 		logger.LogErr("RootCA-private: ca_private_key.pem encoding failure", "error", err)
 		return err

@@ -59,8 +59,8 @@ func GenerateServerCert() (tlsConf *tls.Config, err error) {
 
 // SetUpServerCA is setting up ServerCA.
 func SetUpServerCA(commonName string) (ca *x509.Certificate) {
-	var serialNum int64 = 2021
-	var expandYears int = 10
+	var serialNum int64 = 2023
+	var expandYears int = 11
 
 	// set up our ServerCA certificate
 	ca = &x509.Certificate{
@@ -159,6 +159,7 @@ func CreateCertPrivate(certPrivKey *rsa.PrivateKey, certPEM *bytes.Buffer) (tlsC
 		return nil, err
 	}
 
+	// TLS通信のセットアップ
 	serverCert, err := tls.X509KeyPair(certPEM.Bytes(), certPrivKeyPEM.Bytes())
 	if err != nil {
 		logger.LogErr("server-private: Failed to parse the public and private key pair.", "error", err)
@@ -172,32 +173,32 @@ func CreateCertPrivate(certPrivKey *rsa.PrivateKey, certPEM *bytes.Buffer) (tlsC
 	return tlsConf, nil
 }
 
-// ==================================================================//
-// Create client certificate
-// ==================================================================//
+// // ==================================================================//
+// // Create client certificate
+// // ==================================================================//
 
-// CreateClientCert creates client certificates.
-func CreateClientCert(certBytes []byte, cName string) (err error) {
-	f, err := os.Create(cName + "_cert.pem")
-	if err != nil {
-		logger.LogErr("client: Failed to create cName_cert.pem", "error", err)
-		return err
-	}
+// // CreateClientCert creates client certificates.
+// func CreateClientCert(certBytes []byte, cName string) (err error) {
+// 	f, err := os.Create(cName + "_cert.pem")
+// 	if err != nil {
+// 		logger.LogErr("client: Failed to create cName_cert.pem", "error", err)
+// 		return err
+// 	}
 
-	err = pem.Encode(f, &pem.Block{
-		Type:  "CERTIFICATE",
-		Bytes: certBytes,
-	})
-	if err != nil {
-		logger.LogErr("client: cName_cert.pem encoding failure", "error", err)
-		return err
-	}
+// 	err = pem.Encode(f, &pem.Block{
+// 		Type:  "CERTIFICATE",
+// 		Bytes: certBytes,
+// 	})
+// 	if err != nil {
+// 		logger.LogErr("client: cName_cert.pem encoding failure", "error", err)
+// 		return err
+// 	}
 
-	err = f.Close()
-	if err != nil {
-		logger.LogErr("client: Failed to close cName_cert.pem", "error", err)
-		return err
-	}
+// 	err = f.Close()
+// 	if err != nil {
+// 		logger.LogErr("client: Failed to close cName_cert.pem", "error", err)
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

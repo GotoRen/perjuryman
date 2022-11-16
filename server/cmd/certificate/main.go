@@ -16,7 +16,7 @@ func main() {
 	if err != nil {
 		logger.LogErr("Failed to get the server certificate information", "error", err)
 	} else {
-		fmt.Println("[INFO] Get TLS configuration information.")
+		fmt.Println("[INFO] Server certificate setup is complete")
 	}
 }
 
@@ -25,15 +25,11 @@ func initCert() (serverTLSConf *tls.Config, err error) {
 	_, _, err = internal.GenerateRootCA()
 	if err != nil {
 		return nil, err
-	} else {
-		fmt.Println("[INFO] Create RootCA")
 	}
 
 	_, err = internal.GenerateServerCert()
 	if err != nil {
 		return nil, err
-	} else {
-		fmt.Println("[INFO] Create server certificate")
 	}
 
 	return serverTLSConf, nil
