@@ -1,13 +1,8 @@
 package exec
 
 import (
-	"bufio"
 	"crypto/tls"
-	"errors"
 	"fmt"
-	"io"
-	"log"
-	"net"
 	"os"
 
 	"github.com/GotoRen/perjuryman/server/internal"
@@ -23,7 +18,7 @@ func Run() {
 		logger.LogErr("Failed to issue perjuryman server certificate", "error", err)
 	}
 
-	// TLS通信ダイアル
+	// TLS listen
 	ln, err := tls.Listen("tcp", "server.local:"+os.Getenv("TLS_PORT"), serverTLSConf)
 	if err != nil {
 		logger.LogErr("Connection refused", "error", err)
@@ -38,43 +33,16 @@ func Run() {
 		}
 	}()
 
-	for {
-		// _, err := ln.Accept()
-		// if err != nil {
-		// 	logger.LogErr("Can't get the socket", "error", err)
-		// 	continue
-		// } else {
-		// 	fmt.Println("[INFO] Established TLS connection...")
-		// }
-
-		// go HandleConnection(conn)
-		conn, err := ln.Accept()
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			fmt.Println("TLS接続成功")
-		}
-
-		_, err = conn.Write([]byte("hello\n"))
-		if err != nil {
-			fmt.Println("[-] ERROR:", err)
-			return
-		} else {
-			fmt.Println("Send messages")
-		}
-
-		// defer conn.Close()
-
-		// for {
-		// 	message, err := bufio.NewReader(conn).ReadString('\n')
-		// 	if err != nil {
-		// 		fmt.Println("no read", err)
-		// 	}
-		// 	log.Print("Message Received:", string(message))
-		// 	newmessage := strings.ToUpper(message)
-		// 	conn.Write([]byte(newmessage + "\n"))
-		// }
+	conn, err := ln.Accept()
+	if err != nil {
+		logger.LogErr("Can't get the socket", "error", err)
 	}
+	defer conn.Close()
+
+	fmt.Println("[INFO] TLS connection established - Local Addr:", conn.LocalAddr().String())
+	fmt.Println("[INFO] TLS connection established - Remote Addr", conn.RemoteAddr().String())
+
+	internal.SubscribeMessage(conn)
 }
 
 func LoadConf() {
@@ -84,27 +52,4 @@ func LoadConf() {
 	}
 
 	logger.InitZap()
-}
-
-// HandleConnection handle TCP connection.
-func HandleConnection(conn net.Conn) {
-	defer func() {
-		if err := conn.Close(); err != nil {
-			logger.LogErr("Error when connection closing", "error", err)
-		}
-	}()
-
-	for {
-		b := make([]byte, 3500)
-		bi := bufio.NewReadWriter(bufio.NewReader(conn), bufio.NewWriter(conn))
-		_, err := bi.Read(b)
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				return
-			}
-
-			return
-		}
-		fmt.Println("OK:", b)
-	}
 }

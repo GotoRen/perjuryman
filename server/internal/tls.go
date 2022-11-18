@@ -34,15 +34,15 @@ func GetCert() (tlsConf *tls.Config, err error) {
 			logger.LogErr("The certificate is not correct.", "error", err)
 			fmt.Println("Error: ルート証明書の解析に失敗しました。") // ca.pemを使用したサーバ証明書を検証
 			return nil, err
+		} else {
+			fmt.Println("[INFO] Certificate verified!!")
 		}
 	}
 
 	// TLS通信のconfig構造を定義
 	tlsConf = &tls.Config{
-		Certificates: []tls.Certificate{serverCert},
 		MinVersion:   tls.VersionTLS13,
-		// ClientCAs:    CAPool,
-		// ClientAuth:   tls.RequireAndVerifyClientCert,
+		Certificates: []tls.Certificate{serverCert},
 	}
 
 	return tlsConf, nil

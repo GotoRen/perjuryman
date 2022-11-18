@@ -6,6 +6,9 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GODOC=$(GOCMD)doc
 GOLANGCI=golangci-lint
+DUMPCMD=tcpdump
+
+INTERFACE=eth0
 
 
 
@@ -41,11 +44,17 @@ coverage: ## coverage
 
 listen: ## check listen port
 	lsof -i -P
+	
+dump: ## dump packet
+	$(DUMPCMD) -i ${INTERFACE}
+
+dump/out: ## dump packet and output to file
+	$(DUMPCMD) -i ${INTERFACE} -w ./debug/dumpfile-server.pcapng
 
 create/certificate/server: ## create ca and server certificate
 	$(GORUN) ./cmd/certificate/main.go
 	@cp ca.pem ../client; echo "[INFO] Sent the root certificate to the client"
-	
+
 
 
 help: ## Display this help screen

@@ -45,8 +45,7 @@ func GenerateRootCA() (ca *x509.Certificate, caPrivKey *rsa.PrivateKey, err erro
 	return ca, caPrivKey, nil
 }
 
-// SetUpRootCA is setting up RootCA.
-func SetUpRootCA(commonName string) (ca *x509.Certificate) {
+func SetUpRootCertificate(commonName string) (ca *x509.Certificate) {
 	var serialNum int64 = 2023
 	var expandYears int = 10
 
@@ -120,7 +119,7 @@ func CreateCA(ca *x509.Certificate, caPrivKey *rsa.PrivateKey) (err error) {
 // CreateCAPrivateKeyPEM creates Private Key.
 func CreateCAPrivateKeyPEM(ca *x509.Certificate, caPrivKey *rsa.PrivateKey) (err error) {
 	// ルート認証局の秘密鍵を作成
-	f, err := os.Create("ca_private_key.pem")
+	f, err := os.Create("ca_private_key.key")
 	if err != nil {
 		logger.LogErr("RootCA-private: Failed to create ca_private_key.pem", "error", err)
 		return err
@@ -176,7 +175,7 @@ func GetRootCA() (ca *x509.Certificate, caPrivKey *rsa.PrivateKey, err error) {
 
 // ReadCAPrivateKey read ca PrivKey
 func ReadCAPrivateKey() (caPrivKey *rsa.PrivateKey, err error) {
-	PriKey, err := os.ReadFile("ca_private_key.pem")
+	PriKey, err := os.ReadFile("ca_private_key.key")
 	if err != nil {
 		logger.LogErr("RootCA: Could not load ca privtekey", "error", err)
 		return nil, err

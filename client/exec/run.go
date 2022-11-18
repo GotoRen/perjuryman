@@ -13,16 +13,22 @@ func Run() {
 
 	conn, err := internal.HandleTLS()
 	if err != nil {
-		logger.LogErr("Failed to establish TLS connection...", "error", err)
-	} else {
-		fmt.Println("TLSを確立しました:", conn.LocalAddr().String())
-		fmt.Println("TLSを確立しました:", conn.RemoteAddr().String())
+		logger.LogErr("Failed to establish TLS connection", "error", err)
+		return
 	}
+	defer func() {
+		if err := conn.Close(); err != nil {
+			logger.LogErr("Error when connection closing", "error", err)
+		}
+	}()
 
-	for {
-	}
+	fmt.Println("[INFO] TLS connection established - Local Addr:", conn.LocalAddr().String())
+	fmt.Println("[INFO] TLS connection established - Remote Addr", conn.RemoteAddr().String())
 
-	// _ := HandleServerConn(conn)
+	// HandleConnection(conn)
+	internal.PublishMessage(conn)
+	// RoutineSequentialSender()
+	// RoutineSequentialReceiver()
 }
 
 func LoadConf() {

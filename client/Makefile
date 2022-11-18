@@ -6,6 +6,9 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GODOC=$(GOCMD)doc
 GOLANGCI=golangci-lint
+DUMPCMD=tcpdump
+
+INTERFACE=eth0
 
 
 
@@ -38,6 +41,15 @@ doc: ## godoc http:6060
 coverage: ## coverage
 	go test -coverprofile=cover.out ./...
 	go tool cover -html=cover.out -o cover.html
+
+listen: ## check listen port
+	lsof -i -P
+
+dump: ## dump packet
+	$(DUMPCMD) -i ${INTERFACE}
+
+dump/out: ## dump packet and output to file
+	$(DUMPCMD) -i ${INTERFACE} -w ./debug/dumpfile-client.pcapng
 
 
 
