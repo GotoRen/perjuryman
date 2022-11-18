@@ -21,7 +21,7 @@ func Run() {
 		fmt.Println("[INFO] Get TLS config")
 	}
 
-	// Listen
+	// TLS listen
 	ln, err := tls.Listen("tcp", ":"+os.Getenv("TLS_LISTEN_PORT"), tlsConf)
 	if err != nil {
 		logger.LogErr("Connection refused", "error", err)

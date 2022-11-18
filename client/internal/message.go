@@ -23,7 +23,7 @@ Loop:
 			break Loop
 		}
 
-		// 送信
+		// Send
 		_, err := conn.Write([]byte(text + "\n"))
 		if err != nil {
 			logger.LogErr("Failed to write packet", "error", err)
@@ -31,7 +31,7 @@ Loop:
 		}
 		fmt.Print("[DEBUG] Will send text: " + text)
 
-		// 受信
+		// Receive
 		message, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
 			logger.LogErr("Unable to retrieve message", "error", err)
@@ -40,7 +40,7 @@ Loop:
 		fmt.Print("[DEBUG] Message Received: " + string(message))
 	}
 
-	fmt.Println("正常にTLS接続を切断しました。")
+	fmt.Println("[DEBUG] Successfully closed the TLS connection.")
 }
 
 func getInput() string {

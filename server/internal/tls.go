@@ -16,7 +16,7 @@ func HandleTLS() (tlsConf *tls.Config, err error) {
 		return nil, err
 	}
 
-	// Define TLSconfig structure
+	// Define TLS config structure
 	tlsConf = &tls.Config{
 		MinVersion:   tls.VersionTLS13,
 		Certificates: []tls.Certificate{serverCert},

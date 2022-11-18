@@ -7,9 +7,9 @@ import (
 	"os"
 )
 
-// TLSconfigを返します。
+// HandleTLS gets root certificate. This function returns TLS config.
 func HandleTLS() (tlsConf *tls.Config, err error) {
-	// ルート認証局情報の取得
+	// Get RootCA information
 	caPool := x509.NewCertPool()
 	if pemCert, err := os.ReadFile(os.Getenv("ROOT_CERTIFICATE_NAME")); err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func HandleTLS() (tlsConf *tls.Config, err error) {
 		}
 	}
 
-	// TLSconfig構造を定義
+	// Define TLS config structure
 	tlsConf = &tls.Config{
 		MinVersion: tls.VersionTLS13,
 		RootCAs:    caPool,
