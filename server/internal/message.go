@@ -14,7 +14,7 @@ func SubscribeMessage(conn net.Conn) {
 		// 受信
 		message, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			logger.LogErr("Unable to retrieve message", "error", err)
+			logger.LogErr("The connection has been broken", "error", err)
 			return
 		}
 		fmt.Print("\n[DEBUG] Message Received: " + string(message))

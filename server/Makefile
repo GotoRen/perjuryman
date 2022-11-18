@@ -7,8 +7,12 @@ GOGET=$(GOCMD) get
 GODOC=$(GOCMD)doc
 GOLANGCI=golangci-lint
 DUMPCMD=tcpdump
+OPENSSL=openssl
 
 INTERFACE=eth0
+
+ROOT_CERTFILE_NAME=ca.pem
+SERVER_CERTFILE_NAME=server.local.pem
 
 
 
@@ -51,9 +55,21 @@ dump: ## dump packet
 dump/out: ## dump packet and output to file
 	$(DUMPCMD) -i ${INTERFACE} -w ./debug/dumpfile-server.pcapng
 
-create/certificate/server: ## create ca and server certificate
+create/certificate: ## generate certificate
 	$(GORUN) ./cmd/certificate/main.go
-	@cp ca.pem ../client; echo "[INFO] Sent the root certificate to the client"
+	@cp ca.pem ../client; echo "[INFO] 🏃 Sent the root certificate to the client..."
+
+show/root-cert: ## show root certificate
+	${OPENSSL} x509 -text -noout -in ${ROOT_CERTFILE_NAME}
+
+show/server-cert: ## show server certificate
+	${OPENSSL} x509 -text -noout -in ${SERVER_CERTFILE_NAME}
+
+verify/root-cert: ## verify root certificate
+	${OPENSSL} verify -CAfile ${ROOT_CERTFILE_NAME} ${ROOT_CERTFILE_NAME}
+
+verify/server-cert: ## verify server certificate
+	${OPENSSL} verify -CAfile ${ROOT_CERTFILE_NAME} ${SERVER_CERTFILE_NAME}
 
 
 

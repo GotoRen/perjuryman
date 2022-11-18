@@ -13,35 +13,39 @@ import (
 func Run() {
 	LoadConf()
 
-	serverTLSConf, err := internal.GetCert() // サーバ証明書を取得
+	// TLS config
+	tlsConf, err := internal.GetServverCertificate()
 	if err != nil {
-		logger.LogErr("Failed to issue perjuryman server certificate", "error", err)
+		logger.LogErr("TLS configのsy特に失敗しました。", "error", err)
+	} else {
+		fmt.Println("[INFO] Get TLS config")
 	}
 
-	// TLS listen
-	ln, err := tls.Listen("tcp", "server.local:"+os.Getenv("TLS_PORT"), serverTLSConf)
+	// Listen
+	ln, err := tls.Listen("tcp", "server.local:"+os.Getenv("TLS_PORT"), tlsConf) // TODO: env
 	if err != nil {
 		logger.LogErr("Connection refused", "error", err)
 		return
 	} else {
 		fmt.Println("[INFO] TLS listen...")
 	}
-
 	defer func() {
 		if err := ln.Close(); err != nil {
 			logger.LogErr("Error when TLS listen closing", "error", err)
 		}
 	}()
 
+	// Connection start
 	conn, err := ln.Accept()
 	if err != nil {
 		logger.LogErr("Can't get the socket", "error", err)
+	} else {
+		fmt.Println("[INFO] TLS connection established - Local Addr:", conn.LocalAddr().String())
+		fmt.Println("[INFO] TLS connection established - Remote Addr", conn.RemoteAddr().String())
 	}
 	defer conn.Close()
 
-	fmt.Println("[INFO] TLS connection established - Local Addr:", conn.LocalAddr().String())
-	fmt.Println("[INFO] TLS connection established - Remote Addr", conn.RemoteAddr().String())
-
+	// Data manipulation
 	internal.SubscribeMessage(conn)
 }
 

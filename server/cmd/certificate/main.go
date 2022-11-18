@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 
 	"github.com/GotoRen/perjuryman/server/exec"
@@ -12,25 +11,17 @@ import (
 func main() {
 	exec.LoadConf()
 
-	_, err := initCert()
-	if err != nil {
-		logger.LogErr("Failed to get the server certificate information", "error", err)
+	// ルートCAを構築
+	if err := internal.CreatRootCA(); err != nil {
+		logger.LogErr("ルートCAの構築に失敗しました", "error", err)
 	} else {
-		fmt.Println("[INFO] Server certificate setup is complete")
-	}
-}
-
-// initCert return certificate information.
-func initCert() (serverTLSConf *tls.Config, err error) {
-	_, _, err = internal.GenerateRootCA()
-	if err != nil {
-		return nil, err
+		fmt.Println("[INFO] ルートCAを構築しました")
 	}
 
-	_, err = internal.GenerateServerCert()
-	if err != nil {
-		return nil, err
+	// サーバを構築
+	if err := internal.CreateServer(); err != nil {
+		logger.LogErr("サーバの構築に失敗しました", "error", err)
+	} else {
+		fmt.Println("[INFO] サーバを構築しました")
 	}
-
-	return serverTLSConf, nil
 }
