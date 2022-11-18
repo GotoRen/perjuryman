@@ -14,7 +14,7 @@ func Run() {
 	LoadConf()
 
 	// TLS config
-	tlsConf, err := internal.GetServverCertificate()
+	tlsConf, err := internal.HandleTLS()
 	if err != nil {
 		logger.LogErr("TLS configの取得に失敗しました。", "error", err)
 	} else {
@@ -45,7 +45,7 @@ func Run() {
 	}
 	defer conn.Close()
 
-	// Data manipulation
+	// Data communication
 	internal.SubscribeMessage(conn)
 }
 

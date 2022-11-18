@@ -73,7 +73,7 @@ show/root-cert-privkey: ## show root certificate private key
 show/server-cert-privkey: ## show server certificate private key
 	${OPENSSL} rsa -text -noout -in ${SERVER_CERTIFICATE_PRIVATEKEY_NAME}
 
-verify/root-cert: ## verify root certificate
+verify/root-cert: ## perjury: verify root certificate
 	${OPENSSL} verify -CAfile ${ROOT_CERTIFICATE_NAME} ${ROOT_CERTIFICATE_NAME}
 
 verify/server-cert: ## verify server certificate
