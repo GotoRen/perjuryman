@@ -7,8 +7,14 @@ GOGET=$(GOCMD) get
 GODOC=$(GOCMD)doc
 GOLANGCI=golangci-lint
 DUMPCMD=tcpdump
+OPENSSL=openssl
 
 INTERFACE=eth0
+
+ROOT_CERTIFICATE_NAME=ca.pem
+ROOT_CERTIFICATE_PRIVATEKEY_NAME=ca.key
+SERVER_CERTIFICATE_NAME=server.local.pem
+SERVER_CERTIFICATE_PRIVATEKEY_NAME=server.local.key
 
 
 
@@ -50,6 +56,12 @@ dump: ## dump packet
 
 dump/out: ## dump packet and output to file
 	$(DUMPCMD) -i ${INTERFACE} -w ./debug/dumpfile-client.pcapng
+
+show/root-cert: ## show root certificate
+	${OPENSSL} x509 -text -noout -in ${ROOT_CERTIFICATE_NAME}
+
+verify/root-cert: ## perjury: verify root certificate
+	${OPENSSL} verify -CAfile ${ROOT_CERTIFICATE_NAME} ${ROOT_CERTIFICATE_NAME}
 
 
 

@@ -1,35 +1,15 @@
-# perjuryman
+# 🎭 perjuryman: SSL/TLS verification using "ole ole certificate"
 
-## Usage
-```
-### RootCAとサーバ証明書を準備
-> server
-$ make create/certificate/server
+## 🌱　Overview
+- You can use this source code to verify TLS communication using "ole ole certificate"
+.
+- Issuing a TLS server certificate with a self-built root CA.
 
-### クライアント証明書を準備
-> client
-$ make create/certificate/client
-```
+## ✏️ Documents
+- [Overview of PKI](./docs/01_pki.md)
+- [Information: Perjuryman design](./docs/02_information.md)
+- [Usage: How to start perjuryman](./docs/03_usage.md)
 
-## Certificates and Keys
-| 鍵の種類 | 説明 |
-| :--- | :--- |
-| `ca.pem` | ルート証明書（RSA公開鍵証明書） |
-| `ca_private_key.pem` | ルート証明書のRSA秘密鍵 |
-| `server.pem` | サーバ証明書（RSA公開鍵証明書） |
-| `server.key` | サーバ証明書のRSA秘密鍵 |
-| `client.pem` | クライアント証明書（RSA公開鍵証明書） |
-| `client_private.key` | クライアント証明書のRSA秘密鍵 |
-
-## アルゴリズム
-- 1. 各証明書の発行手順
-  - ルート認証局を構築
-  - ルート証明書（公開鍵証明書）を発行（オレオレ証明書）=> ルート認証局が保持
-  - ルート証明書をサーバとクライアントに付与
-  - サーバ証明書（公開鍵証明書）をルート認証局の秘密鍵で署名して発行 => サーバに付与
-  - クライアント証明書（公開鍵証明書）をルート認証局の秘密鍵で署名して発行 => クライアントに付与
-- 2. TLS通信のフロー
-  - クライアントはサーバに対してリクエストを送信
-    - サーバはルート証明書を用いてクライアント証明書（公開鍵証明書）を検証
-    - クライアントはルート証明書を用いてサーバ証明書（公開鍵証明書）を検証
-  - それぞれが検証された場合、TLSコネクションを確立
+## 📚 References
+- [RFC 5280 - Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile](https://www.rfc-editor.org/rfc/rfc5280)
+- [RFC 8446 - The Transport Layer Security (TLS) Protocol Version 1.3](https://www.rfc-editor.org/rfc/rfc8446)

@@ -1,7 +1,9 @@
 package exec
 
 import (
+	"crypto/tls"
 	"fmt"
+	"os"
 
 	"github.com/GotoRen/perjuryman/client/internal"
 	"github.com/GotoRen/perjuryman/client/internal/logger"
@@ -11,10 +13,24 @@ import (
 func Run() {
 	LoadConf()
 
-	conn, err := internal.HandleTLS()
+	// TLS config
+	tlsConf, err := internal.HandleTLS()
 	if err != nil {
-		logger.LogErr("Failed to establish TLS connection", "error", err)
+		logger.LogErr("TLS configの取得に失敗しました。", "error", err)
+	} else {
+		fmt.Println("[INFO] Get TLS config")
+	}
+
+	// Dial
+	conn, err := tls.Dial("tcp", os.Getenv("SERVER_FQDN")+":"+os.Getenv("TLS_LISTEN_PORT"), tlsConf)
+	if err != nil {
+		logger.LogErr("Connection refused", "error", err)
 		return
+	} else {
+		// Connection start
+		fmt.Println("[INFO] TLS dial...")
+		fmt.Println("[INFO] TLS connection established - Local Addr:", conn.LocalAddr().String())
+		fmt.Println("[INFO] TLS connection established - Remote Addr", conn.RemoteAddr().String())
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
@@ -22,13 +38,8 @@ func Run() {
 		}
 	}()
 
-	fmt.Println("[INFO] TLS connection established - Local Addr:", conn.LocalAddr().String())
-	fmt.Println("[INFO] TLS connection established - Remote Addr", conn.RemoteAddr().String())
-
-	// HandleConnection(conn)
+	// Data communication
 	internal.PublishMessage(conn)
-	// RoutineSequentialSender()
-	// RoutineSequentialReceiver()
 }
 
 func LoadConf() {
