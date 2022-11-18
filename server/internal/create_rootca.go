@@ -29,7 +29,7 @@ func CreatRootCA() (err error) {
 	}
 
 	// ルート証明書を発行
-	rootCert := setupRootCertificate("RootCA") // ルートCAのX.509 証明書を定義します。 // TODO: common name env
+	rootCert := setupRootCertificate("RootCA") // ルートCAのX.509 証明書を定義します。
 	if err = generateRootCertificate(rootCert, rootCertPrivKey); err != nil {
 		logger.LogErr("ルート証明書を発行できませんでした。", "error", err)
 		return err
@@ -50,8 +50,8 @@ func CreatRootCA() (err error) {
 
 // ルートCAのX.509 証明書を表します
 func setupRootCertificate(commonName string) (ca *x509.Certificate) {
-	var serialNum int64 = 2023 // TODO:  env
-	var expandYears int = 10   // TODO:  env
+	var serialNum int64 = 2023
+	var expandYears int = 10
 
 	ca = &x509.Certificate{
 		SerialNumber: big.NewInt(serialNum),
@@ -68,7 +68,7 @@ func setupRootCertificate(commonName string) (ca *x509.Certificate) {
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(expandYears, 0, 0),
 		IsCA:                  true,
-		EmailAddresses:        []string{"ren510dev@gmail.com"}, // TODO:  env
+		EmailAddresses:        []string{os.Getenv("CERTIFICATE_REGISTER_EMAIL")},
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		BasicConstraintsValid: true,
@@ -79,7 +79,7 @@ func setupRootCertificate(commonName string) (ca *x509.Certificate) {
 
 // ルート証明書を発行します
 func generateRootCertificate(rootCert *x509.Certificate, rootCertPrivKey *rsa.PrivateKey) (err error) {
-	f, err := os.Create("ca.pem") // TODO: env
+	f, err := os.Create(os.Getenv("ROOT_CERTIFICATE_NAME"))
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func generateRootCertificate(rootCert *x509.Certificate, rootCertPrivKey *rsa.Pr
 
 // ルート証明書のRSA秘密鍵を生成します
 func generateRootCertificatePrivateKey(rootCertPrivKey *rsa.PrivateKey) (err error) {
-	f, err := os.Create("ca.key") // TODO: env
+	f, err := os.Create(os.Getenv("ROOT_CERTIFICATE_PRIVATEKEY_NAME"))
 	if err != nil {
 		return err
 	}

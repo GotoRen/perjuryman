@@ -16,13 +16,13 @@ func Run() {
 	// TLS config
 	tlsConf, err := internal.GetServverCertificate()
 	if err != nil {
-		logger.LogErr("TLS configのsy特に失敗しました。", "error", err)
+		logger.LogErr("TLS configの取得に失敗しました。", "error", err)
 	} else {
 		fmt.Println("[INFO] Get TLS config")
 	}
 
 	// Listen
-	ln, err := tls.Listen("tcp", "server.local:"+os.Getenv("TLS_PORT"), tlsConf) // TODO: env
+	ln, err := tls.Listen("tcp", ":"+os.Getenv("TLS_LISTEN_PORT"), tlsConf)
 	if err != nil {
 		logger.LogErr("Connection refused", "error", err)
 		return

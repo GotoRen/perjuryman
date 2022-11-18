@@ -30,7 +30,7 @@ func GetRootCA() (rootCert *x509.Certificate, rootCertPrivKey *rsa.PrivateKey, e
 
 // ルート証明書をリードします
 func readRootCertificate() (rootCert *x509.Certificate, err error) {
-	f, err := os.ReadFile("ca.pem")
+	f, err := os.ReadFile(os.Getenv("ROOT_CERTIFICATE_NAME"))
 	if err != nil {
 		logger.LogErr("RootCA: Could not load ca certificate", "error", err)
 		return nil, err
@@ -57,7 +57,7 @@ func readRootCertificate() (rootCert *x509.Certificate, err error) {
 
 // ルート証明書のRSA秘密鍵をリードします
 func readRootCertificatePrivateKey() (rootCertPrivKey *rsa.PrivateKey, err error) {
-	f, err := os.ReadFile("ca.key")
+	f, err := os.ReadFile(os.Getenv("ROOT_CERTIFICATE_PRIVATEKEY_NAME"))
 	if err != nil {
 		return nil, err
 	}
