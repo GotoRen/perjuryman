@@ -16,7 +16,7 @@ func Run() {
 	// TLS config
 	tlsConf, err := internal.HandleTLS()
 	if err != nil {
-		logger.LogErr("TLS configの取得に失敗しました。", "error", err)
+		logger.LogErr("Failed to get TLS config", "error", err)
 	} else {
 		fmt.Println("[INFO] Get TLS config")
 	}

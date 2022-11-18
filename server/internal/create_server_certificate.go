@@ -17,49 +17,50 @@ import (
 // ==================================================================//
 // Create "Server certificate"
 // ==================================================================//
-// サーバを構築します。
+
+// CreateServer builds a Server.
 func CreateServer() (err error) {
-	// ルート証明書とその秘密鍵を取得します。
+	// get the root certificate and its private key
 	rootCert, rootCertPrivKey, err := GetRootCA()
 	if err != nil {
 		return err
 	}
 
-	// サーバのRSA Keyペアを生成
+	// generate Server's rsa key pair
 	serverCertPrivKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
-		logger.LogErr("サーバのRSA Keyペアの生成に失敗しました", "error", err)
+		logger.LogErr("Failed to generate the Server's rsa key pair", "error", err)
 		return err
 	} else {
-		fmt.Println("[INFO] サーバのRSA Keyペアを生成しました")
+		fmt.Println("[INFO] Generate the Server's rsa key pair")
 	}
 
-	// サーバ証明書を発行
-	serverCert := setupServerCertificate(os.Getenv("SERVER_FQDN")) // サーバのX.509 証明書を定義します。
+	// issue the server certificate
+	serverCert := setupServerCertificate(os.Getenv("SERVER_FQDN")) // Define the Server's X.509 certificate
 	if err = generateServerCertificate(serverCert, serverCertPrivKey, rootCert, rootCertPrivKey); err != nil {
-		logger.LogErr("サーバ証明書を発行できませんでした。", "error", err)
+		logger.LogErr("Failed to generate the server certificate", "error", err)
 		return err
 	} else {
-		fmt.Println("[INFO] サーバ証明書を発行しました")
+		fmt.Println("[INFO] Generate the server certificate")
 	}
 
-	// サーバ証明書の秘密鍵を生成
+	// generate private key for server certificate
 	if err = generateServerCertificatePrivateKey(serverCertPrivKey); err != nil {
-		logger.LogErr("サーバ証明書の秘密鍵の生成に失敗しました", "error", err)
+		logger.LogErr("Failed to generate private key for server certificate", "error", err)
 		return err
 	} else {
-		fmt.Println("[INFO] サーバ証明書の秘密鍵を生成しました")
+		fmt.Println("[INFO] Generate private key for server certificate")
 	}
 
 	return nil
 }
 
-// サーバのX.509 証明書を表します
-func setupServerCertificate(commonName string) (ca *x509.Certificate) {
+// setupServerCertificate represents the Server's X.509 certificate.
+func setupServerCertificate(commonName string) (cert *x509.Certificate) {
 	var serialNum int64 = 2023
 	var expandYears int = 10
 
-	ca = &x509.Certificate{
+	cert = &x509.Certificate{
 		SerialNumber: big.NewInt(serialNum),
 		Subject: pkix.Name{
 			Organization:       []string{"Perjuryman"},
@@ -81,10 +82,10 @@ func setupServerCertificate(commonName string) (ca *x509.Certificate) {
 		DNSNames:              []string{commonName},
 	}
 
-	return ca
+	return cert
 }
 
-// サーバ証明書を発行します
+// generateServerCertificate generates server certificate.
 func generateServerCertificate(serverCert *x509.Certificate, serverCertPrivKey *rsa.PrivateKey, rootCert *x509.Certificate, rootCertPrivKey *rsa.PrivateKey) (err error) {
 	f, err := os.Create(os.Getenv("SERVER_CERTIFICATE_NAME"))
 	if err != nil {
@@ -111,7 +112,7 @@ func generateServerCertificate(serverCert *x509.Certificate, serverCertPrivKey *
 	return nil
 }
 
-// サーバ証明書のRSA秘密鍵を生成します
+// generateServerCertificatePrivateKey generates RSA private key for server certificate.
 func generateServerCertificatePrivateKey(serverCertPrivKey *rsa.PrivateKey) (err error) {
 	f, err := os.Create(os.Getenv("SERVER_CERTIFICATE_PRIVATEKEY_NAME"))
 	if err != nil {

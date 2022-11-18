@@ -11,17 +11,17 @@ import (
 func main() {
 	exec.LoadConf()
 
-	// ルートCAを構築
+	// built the RootCA
 	if err := internal.CreatRootCA(); err != nil {
-		logger.LogErr("ルートCAの構築に失敗しました", "error", err)
+		logger.LogErr("Failed to build RootCA", "error", err)
 	} else {
-		fmt.Println("[INFO] ルートCAを構築しました")
+		fmt.Println("[INFO] Built the RootCA")
 	}
 
-	// サーバを構築
+	// built the Server
 	if err := internal.CreateServer(); err != nil {
-		logger.LogErr("サーバの構築に失敗しました", "error", err)
+		logger.LogErr("Failed to build Server", "error", err)
 	} else {
-		fmt.Println("[INFO] サーバを構築しました")
+		fmt.Println("[INFO] Built the Server")
 	}
 }

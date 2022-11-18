@@ -17,43 +17,44 @@ import (
 // ==================================================================//
 // Create "RootCA" and "Root certificate"
 // ==================================================================//
-// ルートCAを構築します。
+
+// CreateRootCA builds a RootCA.
 func CreatRootCA() (err error) {
-	// ルートCAのRSA Keyペアを生成
+	// generate RootCA's rsa key pair
 	rootCertPrivKey, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
-		logger.LogErr("ルートCAのRSA Keyペアの生成に失敗しました", "error", err)
+		logger.LogErr("Failed to generate the RootCA's rsa key pair", "error", err)
 		return err
 	} else {
-		fmt.Println("[INFO] ルートCAのRSA Keyペアを生成しました")
+		fmt.Println("[INFO] Generate the RootCA's rsa key pair")
 	}
 
-	// ルート証明書を発行
-	rootCert := setupRootCertificate("RootCA") // ルートCAのX.509 証明書を定義します。
+	// issue the root certificate
+	rootCert := setupRootCertificate("RootCA") // Define the RootCA's X.509 certificate
 	if err = generateRootCertificate(rootCert, rootCertPrivKey); err != nil {
-		logger.LogErr("ルート証明書を発行できませんでした。", "error", err)
+		logger.LogErr("Failed to generate the root certificate", "error", err)
 		return err
 	} else {
-		fmt.Println("[INFO] ルート証明書を発行しました")
+		fmt.Println("[INFO] Generate the root certificate")
 	}
 
-	// ルート証明書の秘密鍵を生成
+	// generate private key for root certificate
 	if err = generateRootCertificatePrivateKey(rootCertPrivKey); err != nil {
-		logger.LogErr("ルート証明書の秘密鍵の生成に失敗しました", "error", err)
+		logger.LogErr("Failed to generate private key for root certificate", "error", err)
 		return err
 	} else {
-		fmt.Println("[INFO] ルート証明書の秘密鍵を生成しました")
+		fmt.Println("[INFO] Generate private key for root certificate")
 	}
 
 	return nil
 }
 
-// ルートCAのX.509 証明書を表します
-func setupRootCertificate(commonName string) (ca *x509.Certificate) {
+// setupRootCertificate represents the RootCA's X.509 certificate.
+func setupRootCertificate(commonName string) (cert *x509.Certificate) {
 	var serialNum int64 = 2023
 	var expandYears int = 10
 
-	ca = &x509.Certificate{
+	cert = &x509.Certificate{
 		SerialNumber: big.NewInt(serialNum),
 		Subject: pkix.Name{
 			Organization:       []string{"Perjuryman"},
@@ -74,10 +75,10 @@ func setupRootCertificate(commonName string) (ca *x509.Certificate) {
 		BasicConstraintsValid: true,
 	}
 
-	return ca
+	return cert
 }
 
-// ルート証明書を発行します
+// generateRootCertificate generates root certificate.
 func generateRootCertificate(rootCert *x509.Certificate, rootCertPrivKey *rsa.PrivateKey) (err error) {
 	f, err := os.Create(os.Getenv("ROOT_CERTIFICATE_NAME"))
 	if err != nil {
@@ -104,7 +105,7 @@ func generateRootCertificate(rootCert *x509.Certificate, rootCertPrivKey *rsa.Pr
 	return nil
 }
 
-// ルート証明書のRSA秘密鍵を生成します
+// generateRootCertificatePrivateKey generates RSA private key for root certificate.
 func generateRootCertificatePrivateKey(rootCertPrivKey *rsa.PrivateKey) (err error) {
 	f, err := os.Create(os.Getenv("ROOT_CERTIFICATE_PRIVATEKEY_NAME"))
 	if err != nil {

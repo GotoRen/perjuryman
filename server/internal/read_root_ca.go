@@ -13,7 +13,8 @@ import (
 // ==================================================================//
 // Read "RootCA" and "Root certificate"
 // ==================================================================//
-// ルート証明書とその秘密鍵を取得します。
+
+// GetRootCA gets root certificate and its private key.
 func GetRootCA() (rootCert *x509.Certificate, rootCertPrivKey *rsa.PrivateKey, err error) {
 	rootCert, err = readRootCertificate()
 	if err != nil {
@@ -28,7 +29,7 @@ func GetRootCA() (rootCert *x509.Certificate, rootCertPrivKey *rsa.PrivateKey, e
 	return rootCert, rootCertPrivKey, nil
 }
 
-// ルート証明書をリードします
+// readRootCertificate reads root certificate.
 func readRootCertificate() (rootCert *x509.Certificate, err error) {
 	f, err := os.ReadFile(os.Getenv("ROOT_CERTIFICATE_NAME"))
 	if err != nil {
@@ -55,7 +56,7 @@ func readRootCertificate() (rootCert *x509.Certificate, err error) {
 	return rootCert, nil
 }
 
-// ルート証明書のRSA秘密鍵をリードします
+// readRootCertificatePrivateKey reads root certificate's RSA private key.
 func readRootCertificatePrivateKey() (rootCertPrivKey *rsa.PrivateKey, err error) {
 	f, err := os.ReadFile(os.Getenv("ROOT_CERTIFICATE_PRIVATEKEY_NAME"))
 	if err != nil {

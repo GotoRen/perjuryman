@@ -11,15 +11,15 @@ import (
 
 func SubscribeMessage(conn net.Conn) {
 	for {
-		// 受信
+		// Receive
 		message, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			logger.LogErr("The connection has been broken", "error", err)
+			logger.LogErr("TLS connection has been broken", "error", err)
 			return
 		}
 		fmt.Print("\n[DEBUG] Message Received: " + string(message))
 
-		// 送信
+		// Send
 		newmessage := strings.ToUpper(message)
 		_, err = conn.Write([]byte(newmessage + "\n"))
 		if err != nil {
