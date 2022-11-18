@@ -11,8 +11,10 @@ OPENSSL=openssl
 
 INTERFACE=eth0
 
-ROOT_CERTFILE_NAME=ca.pem
-SERVER_CERTFILE_NAME=server.local.pem
+ROOT_CERTIFICATE_NAME=ca.pem
+ROOT_CERTIFICATE_PRIVATEKEY_NAME=ca.key
+SERVER_CERTIFICATE_NAME=server.local.pem
+SERVER_CERTIFICATE_PRIVATEKEY_NAME=server.local.key
 
 
 
@@ -60,16 +62,22 @@ create/certificate: ## generate certificate
 	@cp ca.pem ../client; echo "[INFO] 🏃 Sent the root certificate to the client..."
 
 show/root-cert: ## show root certificate
-	${OPENSSL} x509 -text -noout -in ${ROOT_CERTFILE_NAME}
+	${OPENSSL} x509 -text -noout -in ${ROOT_CERTIFICATE_NAME}
 
 show/server-cert: ## show server certificate
-	${OPENSSL} x509 -text -noout -in ${SERVER_CERTFILE_NAME}
+	${OPENSSL} x509 -text -noout -in ${SERVER_CERTIFICATE_NAME}
+
+show/root-cert-privkey: ## show root certificate private key
+	${OPENSSL} rsa -text -noout -in ${ROOT_CERTIFICATE_PRIVATEKEY_NAME}
+
+show/server-cert-privkey: ## show server certificate private key
+	${OPENSSL} rsa -text -noout -in ${SERVER_CERTIFICATE_PRIVATEKEY_NAME}
 
 verify/root-cert: ## verify root certificate
-	${OPENSSL} verify -CAfile ${ROOT_CERTFILE_NAME} ${ROOT_CERTFILE_NAME}
+	${OPENSSL} verify -CAfile ${ROOT_CERTIFICATE_NAME} ${ROOT_CERTIFICATE_NAME}
 
 verify/server-cert: ## verify server certificate
-	${OPENSSL} verify -CAfile ${ROOT_CERTFILE_NAME} ${SERVER_CERTFILE_NAME}
+	${OPENSSL} verify -CAfile ${ROOT_CERTIFICATE_NAME} ${SERVER_CERTIFICATE_NAME}
 
 
 
