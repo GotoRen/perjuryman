@@ -24,6 +24,7 @@ func HandleTLS() (tlsConf *tls.Config, err error) {
 	tlsConf = &tls.Config{
 		MinVersion: tls.VersionTLS13,
 		RootCAs:    caPool,
+		// InsecureSkipVerify: true, // If you do not perform certificate verification.
 	}
 
 	return tlsConf, nil
